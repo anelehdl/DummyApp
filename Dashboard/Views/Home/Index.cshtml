@@ -103,6 +103,47 @@
             transform: translateY(-5px);
         }
 
+    /* User Management Panel Specific Styles */
+    .user-management-panel {
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(111, 155, 255, 0.2));
+        border: 2px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .panel-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+    .btn-primary-glass {
+        background: rgba(78, 115, 223, 0.3);
+        border: 1px solid rgba(78, 115, 223, 0.5);
+    }
+
+        .btn-primary-glass:hover {
+            background: rgba(78, 115, 223, 0.5);
+        }
+
     /* Login Panel Styles */
     .login-panel {
         max-width: 500px;
@@ -141,9 +182,33 @@
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
 
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: rgba(220, 53, 69, 0.3);
+        border: 1px solid rgba(220, 53, 69, 0.5);
+    }
+
+        .role-badge.staff {
+            background: rgba(111, 155, 255, 0.3);
+            border: 1px solid rgba(111, 155, 255, 0.5);
+        }
+
     @@media (max-width: 768px) {
         .hero-heading {
             font-size: 3rem;
+        }
+
+        .panel-actions {
+            flex-direction: column;
+        }
+
+        .btn-glass {
+            width: 100%;
+            text-align: center;
         }
     }
 </style>
@@ -159,21 +224,52 @@
     {
         <!-- Dashboard Panels for Authenticated Users -->
         <div class="panel">
-            <h2>Welcome back, @User.Identity.Name!</h2>
+            <h2>
+                Welcome back, @User.Identity.Name!
+                @if (User.IsInRole("admin"))
+                {
+                    <span class="role-badge">Admin</span>
+                }
+                else if (User.IsInRole("staff"))
+                {
+                    <span class="role-badge staff">Staff</span>
+                }
+            </h2>
             <p>Here's your personalized dashboard overview</p>
         </div>
+
+        @* User Management Panel - Admin Only *@
+        @if (User.IsInRole("admin"))
+        {
+            <div class="panel user-management-panel">
+                <h2>User Management</h2>
+                <p>Manage system users, assign roles, and control access permissions</p>
+                <div class="panel-actions">
+                    <a asp-controller="UserManagement" asp-action="Index" class="btn-glass btn-primary-glass">
+                        Manage Users
+                    </a>
+                    <a asp-controller="UserManagement" asp-action="Index" class="btn-glass">
+                        View All Users
+                    </a>
+                </div>
+            </div>
+        }
+
         <div class="panel">
             <h2>Overview</h2>
             <p>This is a placeholder for the dashboard content</p>
         </div>
+
         <div class="panel">
             <h2>Recent Activity</h2>
             <p>This admin viewed reports on this client etc</p>
         </div>
+
         <div class="panel">
             <h2>Stock Metrics</h2>
             <p>Stock Metrics per client</p>
         </div>
+
         <div class="panel">
             <h2>Emergency Reports</h2>
             <p>Predicted Emergency Reports</p>

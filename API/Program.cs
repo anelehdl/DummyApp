@@ -14,9 +14,10 @@ builder.Services.AddSwaggerGen();
 // Add Infrastructure services (MongoDB, business services)
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Register AuthenticationService and UserService explicitly
+// Register all services
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<RoleService>();
 
 // JWT Authentication for API
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -34,6 +35,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+
+// Add Authorization
+builder.Services.AddAuthorization();
 
 // CORS for Dashboard to call API
 builder.Services.AddCors(options =>
