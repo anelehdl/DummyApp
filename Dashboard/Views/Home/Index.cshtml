@@ -1,0 +1,285 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var isAuthenticated = ViewBag.IsAuthenticated ?? false;
+}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary: #4e73df;
+        --secondary: #858796;
+        --accent: #6f9bff;
+        --glass: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+        color: white;
+        min-height: 100vh;
+        background-size: 400% 400%;
+        animation: bgShift 15s ease-in-out infinite;
+        scroll-behavior: smooth;
+    }
+
+    @@keyframes bgShift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .hero {
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: fixed;
+        transition: all 0.5s ease-in-out;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .hero-heading {
+        font-size: 5rem;
+        text-shadow: 2px 4px 6px var(--glass-border);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .dashboard-content {
+        max-width: 80%;
+        min-height: 100%;
+        margin: 0 auto;
+        padding: 5rem 5rem 5rem 5rem;
+        position: relative;
+        z-index: 2;
+        margin-top: 200vh;
+        transition: all 0.5s ease-in-out;
+        transform: translateY(50px);
+        background: var(--glass);
+        border-radius: 100px;
+    }
+
+        .dashboard-content.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    .panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        opacity: 0;
+        transform: translateY(200px);
+        transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+        .panel.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+        }
+
+    /* Login Panel Styles */
+    .login-panel {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+        .login-panel .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.75rem;
+        }
+
+            .login-panel .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+            .login-panel .form-control:focus {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: white;
+                color: white;
+                box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            }
+
+        .login-panel .btn-light {
+            background: white;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 0.75rem;
+            border: none;
+        }
+
+            .login-panel .btn-light:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+    @@media (max-width: 768px) {
+        .hero-heading {
+            font-size: 3rem;
+        }
+    }
+</style>
+
+<section class="hero" id="hero">
+    <div class="text-center">
+        <h1 class="hero-heading" id="heroHeading">Welcome to the Nutec Dashboard</h1>
+    </div>
+</section>
+
+<section class="dashboard-content" id="dashboard">
+    @if (isAuthenticated)
+    {
+        <!-- Dashboard Panels for Authenticated Users -->
+        <div class="panel">
+            <h2>Welcome back, @User.Identity.Name!</h2>
+            <p>Here's your personalized dashboard overview</p>
+        </div>
+        <div class="panel">
+            <h2>Overview</h2>
+            <p>This is a placeholder for the dashboard content</p>
+        </div>
+        <div class="panel">
+            <h2>Recent Activity</h2>
+            <p>This admin viewed reports on this client etc</p>
+        </div>
+        <div class="panel">
+            <h2>Stock Metrics</h2>
+            <p>Stock Metrics per client</p>
+        </div>
+        <div class="panel">
+            <h2>Emergency Reports</h2>
+            <p>Predicted Emergency Reports</p>
+        </div>
+    }
+    else
+    {
+        <!-- Login Panel for Unauthenticated Users -->
+        <div class="panel login-panel">
+            <h2 class="text-center mb-4">Login to Continue</h2>
+            <p class="text-center mb-4">Please sign in to access your dashboard</p>
+
+            <form asp-controller="Auth" asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input type="email" id="Email" name="Email" class="form-control" placeholder="Enter your email" required />
+                </div>
+
+                <div class="mb-4">
+                    <label for="Password" class="form-label">Password</label>
+                    <input type="password" id="Password" name="Password" class="form-control" placeholder="Enter your password" required />
+                </div>
+
+                <button type="submit" class="btn btn-light w-100 mb-3">Login</button>
+
+                <div class="text-center">
+                    <small style="color: rgba(255, 255, 255, 0.7);">Don't have an account? <a href="#" class="text-white">Contact Admin</a></small>
+                </div>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>Why Login?</h2>
+            <p>Access real-time dashboard metrics, view reports, and manage your stock efficiently.</p>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        //to ensure always on top with load
+        window.onload = function(){
+            window.scrollTo(0, 0);
+        }
+        window.onbeforeunload = function(){
+            window.scrollTo(0,0);
+        }
+        window.onunload = function(){
+            window.scrollTo(0,0);
+        }
+
+        const hero = document.getElementById("hero");
+        const heroHeading = document.getElementById("heroHeading");
+        const panels = document.querySelectorAll(".panel");
+        const dashboard = document.getElementById("dashboard")
+
+        //fadeout hero when scrolling
+        window.addEventListener('scroll', function(){
+            const scrollPosition = window.scrollY;
+            const heroHeight = window.innerHeight * 0.8;
+
+            //calc opacity based on scroll position
+            const opacity = 1 - (scrollPosition / (heroHeight * 0.5));
+            const translateY = scrollPosition * 0.3;
+
+            heroHeading.style.opacity = opacity;
+            heroHeading.style.transform = `translateY(${translateY}px)`;
+
+            if(scrollPosition > heroHeight){
+                hero.style.opacity = 0;
+                hero.style.pointerEvents = 'none';
+                hero.style.visibility = 'hidden';
+            }else{
+                hero.style.opacity = 1;
+                hero.style.visibility = 'visible';
+            }
+        });
+
+        //fade in dashboard content on scroll
+        const appearOptions = ({
+            threshold: 0.2,
+            rootMargin: "0px 0px -200px 0px"
+        });
+
+        const appearOnScroll = new IntersectionObserver(
+            function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('appear');
+                    } else {
+                        entry.target.classList.remove('appear');
+                    }
+                });
+            }, appearOptions
+        );
+
+        //apply observer to each panel
+        panels.forEach(panel => {
+            appearOnScroll.observe(panel);
+        });
+    </script>
+}
