@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "User Management";
+}
+
+<style>
+    .management-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+    .management-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .management-card {
+        background: linear-gradient(135deg, rgba(78, 115, 223, 0.2), rgba(111, 155, 255, 0.2));
+        border: 2px solid rgba(78, 115, 223, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+        .management-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .management-card.client-card {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(72, 187, 120, 0.2));
+            border-color: rgba(40, 167, 69, 0.3);
+        }
+
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        width: 100%;
+        text-align: center;
+    }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .alert-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.2);
+        border-color: rgba(40, 167, 69, 0.4);
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.2);
+        border-color: rgba(220, 53, 69, 0.4);
+    }
+</style>
+
+<div class="management-container">
+    <h1 class="mb-4">User Management</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-glass">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-glass">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="panel">
+        <h2>Manage Your System Users</h2>
+        <p>Choose an option below to view and manage staff members or clients</p>
+    </div>
+
+    <div class="management-grid">
+        <!-- Staff Management Card -->
+        <div class="management-card">
+            <div class="card-title">Staff Management</div>
+            <div class="card-description">
+                View and manage internal staff members, assign roles (admin/staff), and control system access
+            </div>
+            <a asp-action="ViewStaff" class="btn-glass">
+                View Staff Users
+            </a>
+        </div>
+
+        <!-- Client Management Card -->
+        <div class="management-card client-card">
+            <div class="card-title">Client Management</div>
+            <div class="card-description">
+                View and manage external clients, track company information, and control account status
+            </div>
+            <a asp-action="ViewClients" class="btn-glass">
+                View Client Users
+            </a>
+        </div>
+
+        <!-- All Users Card -->
+        <div class="management-card">
+            <div class="card-title">All Users</div>
+            <div class="card-description">
+                View combined list of all users in the system with advanced filtering and search capabilities
+            </div>
+            <a asp-action="ViewAll" class="btn-glass">
+                View All Users
+            </a>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<UnifiedUserService>();
 
 // JWT Authentication for API
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

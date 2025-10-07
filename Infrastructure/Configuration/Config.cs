@@ -10,4 +10,5 @@ public class CollectionNames
     public string Staff { get; set; }
     public string Roles { get; set; }
     public string Authentication { get; set; }
+    public string Client { get; set; }
 }

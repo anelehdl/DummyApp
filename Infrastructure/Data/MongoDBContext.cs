@@ -23,5 +23,7 @@ namespace Infrastructure.Data
 
         public IMongoCollection<Authentication> AuthenticationCollection =>
             _database.GetCollection<Authentication>(_settings.CollectionNames.Authentication);
+        public IMongoCollection<Client> ClientCollection =>
+            _database.GetCollection<Client>(_settings.CollectionNames.Client);
     }
 }
