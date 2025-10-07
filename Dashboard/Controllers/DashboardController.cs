@@ -1,4 +1,5 @@
 using Core.Models.DTO;
+using Dashboard.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -6,16 +7,17 @@ using System.Security.Claims;
 
 namespace Dashboard.Controllers
 {
+    [Route("[controller]")]
     public class DashboardController : Controller
     {
-        private readonly AuthenticationService _authService;
+        private readonly DashboardAuthService _authService;
 
-        public DashboardController(AuthenticationService authService)
+        public DashboardController(DashboardAuthService authService)
         {
             _authService = authService;
         }
 
-        // GET: /Auth/Index (displays login page)
+        // GET: /Dashboard/Index (displays login page)
         [HttpGet]
         public IActionResult Index()
         {
@@ -26,7 +28,7 @@ namespace Dashboard.Controllers
             return View("Login");
         }
 
-        // POST: /Auth/Login (processes login form)
+        // POST: /Dashboard/Login (processes login form)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginRequestDto model)
@@ -50,7 +52,7 @@ namespace Dashboard.Controllers
                 new Claim(ClaimTypes.NameIdentifier, result.UserId),
                 new Claim(ClaimTypes.Email, result.Email),
                 new Claim(ClaimTypes.GivenName, result.FirstName),
-                new Claim(ClaimTypes.Name, result.FirstName) // This will show in User.Identity.Name
+                new Claim(ClaimTypes.Name, result.FirstName)
             };
 
             // Add role claim if available
@@ -74,7 +76,7 @@ namespace Dashboard.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // POST: /Auth/Logout
+        // POST: /Dashboard/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

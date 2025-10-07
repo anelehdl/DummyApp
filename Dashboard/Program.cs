@@ -1,31 +1,31 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using DummyApp.Infrastructure.Configuration;
+using Dashboard.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MVC for Dashboard
 builder.Services.AddControllersWithViews();
 
-// Add Infrastructure services (same MongoDB, business services)
-builder.Services.AddInfrastructure(builder.Configuration);
+// Register the Dashboard Auth Service
+builder.Services.AddScoped<DashboardAuthService>();
 
 // Cookie Authentication for Dashboard
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Auth/Index";
-        options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.LoginPath = "/Dashboard/Index";
+        options.LogoutPath = "/Dashboard/Logout";
+        options.AccessDeniedPath = "/Dashboard/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 
-// Add HttpClient if Dashboard needs to call API
+// Add HttpClient to call API
 builder.Services.AddHttpClient("DummyAPI", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    client.BaseAddress = new Uri("https://localhost:7218");
 });
 
 var app = builder.Build();

@@ -24,11 +24,6 @@ namespace DummyApp.Infrastructure.Configuration
                 return new MongoDBContext(settings);
             });
 
-            // Register your services
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IUserService, UserService>();
-            // Add other services here...
-
             return services;
         }
     }

@@ -1,4 +1,5 @@
 using DummyApp.Infrastructure.Configuration;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -12,6 +13,10 @@ builder.Services.AddSwaggerGen();
 
 // Add Infrastructure services (MongoDB, business services)
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Register AuthenticationService and UserService explicitly
+builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<UserService>();
 
 // JWT Authentication for API
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -35,7 +40,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowDashboard", policy =>
     {
-        policy.WithOrigins("https://localhost:7002") // Dashboard URL
+        policy.WithOrigins(
+            "https://localhost:7222",
+            "http://localhost:5169",
+            "https://localhost:5169")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
