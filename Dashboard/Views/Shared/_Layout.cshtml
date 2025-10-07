@@ -86,7 +86,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="form-inline">
+                                <form asp-area="" asp-controller="Dashboard" asp-action="Logout" method="post" class="form-inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-link nav-link text-light" style="cursor:pointer;">Logout</button>
                                 </form>
@@ -100,7 +100,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="Dashboard" asp-action="Index">Login</a>
                             </li>
                         }
 

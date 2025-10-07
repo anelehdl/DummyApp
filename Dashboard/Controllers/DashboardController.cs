@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace Dashboard.Controllers
 {
-    [Route("[controller]")]
     public class DashboardController : Controller
     {
         private readonly DashboardAuthService _authService;
