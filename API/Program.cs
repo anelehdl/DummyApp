@@ -19,6 +19,7 @@ builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<UnifiedUserService>();
+builder.Services.AddScoped<InventoryService>();
 
 // JWT Authentication for API
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

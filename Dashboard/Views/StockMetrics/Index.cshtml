@@ -1,0 +1,273 @@
+﻿@model Core.Models.DTO.StockMetricsOverviewDto
+@{
+    ViewData["Title"] = "Stock Metrics";
+}
+
+<style>
+    .metrics-container {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        opacity: 0.9;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .client-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .client-table th,
+    .client-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .client-table th {
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.1);
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 1px;
+    }
+
+    .client-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    .btn-glass:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .chart-container {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-top: 2rem;
+    }
+
+    .sku-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .sku-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .sku-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .sku-amount {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--accent);
+    }
+
+    .sku-unit {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .alert-glass {
+        background: rgba(220, 53, 69, 0.2);
+        border: 1px solid rgba(220, 53, 69, 0.4);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<div class="metrics-container">
+    <h1 class="mb-4">Stock Metrics Dashboard</h1>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-glass">
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (Model != null)
+    {
+        <!-- Overview Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">@Model.TotalClients</div>
+                <div class="stat-label">Active Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.TotalOrders</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
+                <div class="stat-label">Total Litres</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.AverageDailyUsageAllClients.ToString("F2")</div>
+                <div class="stat-label">Avg Daily Usage (L)</div>
+            </div>
+        </div>
+
+        <!-- SKU Distribution -->
+        <div class="panel">
+            <h2 class="mb-3">SKU Distribution</h2>
+            <div class="sku-list">
+                @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
+                {
+                    <div class="sku-item">
+                        <div class="sku-name">@sku.Key</div>
+                        <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                        <div class="sku-unit">litres</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Top Clients -->
+        <div class="panel">
+            <h2 class="mb-3">Top Clients by Usage</h2>
+            
+            @if (Model.TopClients != null && Model.TopClients.Any())
+            {
+                <table class="client-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>User Code</th>
+                            <th>Total Orders</th>
+                            <th>Total Litres</th>
+                            <th>Avg Daily Use</th>
+                            <th>Last Order</th>
+                            <th>Days Since</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in Model.TopClients)
+                        {
+                            <tr>
+                                <td><strong>@client.Username</strong></td>
+                                <td>@client.UserCode</td>
+                                <td>@client.TotalOrders</td>
+                                <td>@client.TotalLitres.ToString("N0") L</td>
+                                <td>@client.AverageDailyUsage.ToString("F2") L/day</td>
+                                <td>
+                                    @if (client.LastOrderDate.HasValue)
+                                    {
+                                        @client.LastOrderDate.Value.ToString("MMM dd, yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span style="opacity: 0.6;">N/A</span>
+                                    }
+                                </td>
+                                <td>@client.DaysSinceLastOrder days</td>
+                                <td>
+                                    <a asp-action="ClientDetails" asp-route-clientId="@client.ClientId" class="btn-glass">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-center mt-4" style="opacity: 0.8;">No client data available.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="panel">
+            <p class="text-center" style="opacity: 0.8;">Loading stock metrics...</p>
+        </div>
+    }
+</div>
