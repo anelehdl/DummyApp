@@ -1,5 +1,327 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<Core.Models.DTO.UnifiedUserDto>
 @{
+    ViewData["Title"] = "All Users";
 }
+
+<style>
+    .management-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-top: 30rem;
+    }
+
+    .panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            border-color: white;
+        }
+
+    .filter-select {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        min-width: 150px;
+    }
+
+        .filter-select option {
+            background: var(--primary);
+            color: white;
+        }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+    }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .user-table th,
+        .user-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .user-table th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: rgba(78, 115, 223, 0.3);
+        border: 1px solid rgba(78, 115, 223, 0.5);
+    }
+
+        .role-badge.admin {
+            background: rgba(220, 53, 69, 0.3);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+        }
+
+        .role-badge.client {
+            background: rgba(40, 167, 69, 0.3);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+        }
+
+    .type-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: rgba(111, 155, 255, 0.3);
+        border: 1px solid rgba(111, 155, 255, 0.5);
+    }
+
+        .type-badge.client-type {
+            background: rgba(40, 167, 69, 0.3);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+        }
+
+    .alert-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.2);
+        border-color: rgba(40, 167, 69, 0.4);
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.2);
+        border-color: rgba(220, 53, 69, 0.4);
+    }
+
+    .back-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: white;
+        }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+        .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-label {
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+</style>
+
+<div class="management-container">
+    <a asp-action="Index" class="back-link">← Back to User Management</a>
+
+    <h1 class="mb-4">All Users</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-glass">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-glass">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (Model != null)
+    {
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(u => u.UserType == "Staff")</div>
+                <div class="stat-label">Staff Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(u => u.UserType == "Client")</div>
+                <div class="stat-label">Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(u => u.RoleName.ToLower() == "admin")</div>
+                <div class="stat-label">Administrators</div>
+            </div>
+        </div>
+    }
+
+    <div class="panel">
+        <h2 class="mb-3">All System Users</h2>
+
+        <form method="get" asp-action="ViewAll">
+            <div class="search-bar">
+                <input type="text" name="searchTerm" class="search-input"
+                       placeholder="Search by name, email, code, or username..."
+                       value="@ViewBag.CurrentSearch" />
+
+                <select name="userType" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="Staff" selected="@(ViewBag.CurrentUserType == "Staff")">Staff Only</option>
+                    <option value="Client" selected="@(ViewBag.CurrentUserType == "Client")">Clients Only</option>
+                </select>
+
+                <button type="submit" class="btn-glass">Filter</button>
+
+                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string) || !string.IsNullOrEmpty(ViewBag.CurrentUserType as string))
+                {
+                    <a asp-action="ViewAll" class="btn-glass">Clear All</a>
+                }
+            </div>
+        </form>
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Identifier</th>
+                        <th>Details</th>
+                        <th>Role</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="type-badge @(user.UserType == "Client" ? "client-type" : "")">
+                                    @user.UserType
+                                </span>
+                            </td>
+                            <td>
+                                @if (user.UserType == "Staff")
+                                {
+                                    <strong>@user.FirstName</strong>
+                                }
+                                else
+                                {
+                                    <strong>@user.UserCode</strong>
+                                }
+                            </td>
+                            <td>
+                                @if (user.UserType == "Staff")
+                                {
+                                    @user.Email
+                                }
+                                else
+                                {
+                                    @user.Username
+                                }
+                            </td>
+                            <td>
+                                <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "") @(user.RoleName.ToLower() == "client" ? "client" : "")">
+                                    @user.RoleName
+                                </span>
+                            </td>
+                            <td>
+                                @if (user.UserType == "Staff")
+                                {
+                                    @user.Phone
+                                }
+                                else
+                                {
+                                    <span style="opacity: 0.6;">N/A</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center mt-4">No users found matching your criteria.</p>
+        }
+    </div>
+</div>

@@ -1,5 +1,361 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<Core.Models.DTO.UnifiedUserDto>
 @{
+    ViewData["Title"] = "Client Management";
+}
+
+<style>
+    .management-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-top: 20rem;
+    }
+
+    .panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            border-color: white;
+        }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+    }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    .btn-primary {
+        background: rgba(40, 167, 69, 0.3);
+        border: 1px solid rgba(40, 167, 69, 0.5);
+    }
+
+        .btn-primary:hover {
+            background: rgba(40, 167, 69, 0.5);
+        }
+
+    .btn-danger {
+        background: rgba(220, 53, 69, 0.3);
+        border: 1px solid rgba(220, 53, 69, 0.5);
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+        .btn-danger:hover {
+            background: rgba(220, 53, 69, 0.5);
+        }
+
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .user-table th,
+        .user-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .user-table th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: rgba(40, 167, 69, 0.3);
+        border: 1px solid rgba(40, 167, 69, 0.5);
+    }
+
+    .alert-glass {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.2);
+        border-color: rgba(40, 167, 69, 0.4);
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.2);
+        border-color: rgba(220, 53, 69, 0.4);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 600px;
+        border: 1px solid var(--glass-border);
+    }
+
+    .close {
+        color: white;
+        float: right;
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            border-color: white;
+        }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .back-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: white;
+        }
+
+    .help-text {
+        font-size: 0.875rem;
+        opacity: 0.8;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<div class="management-container">
+    <a asp-action="Index" class="back-link">← Back to User Management</a>
+
+    <h1 class="mb-4">Client Management</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-glass">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-glass">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Client Users</h2>
+            <button class="btn-glass btn-primary" onclick="openCreateModal()">+ Add New Client</button>
+        </div>
+
+        <form method="get" asp-action="ViewClients">
+            <div class="search-bar">
+                <input type="text" name="searchTerm" class="search-input" placeholder="Search by user code or username..." value="@ViewBag.CurrentSearch" />
+                <button type="submit" class="btn-glass">Search</button>
+                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string))
+                {
+                    <a asp-action="ViewClients" class="btn-glass">Clear</a>
+                }
+            </div>
+        </form>
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>User Code</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.UserCode</td>
+                            <td>@user.Username</td>
+                            <td>
+                                <span class="role-badge">
+                                    @user.RoleName
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.Username')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center mt-4">No client users found.</p>
+        }
+    </div>
+</div>
+
+<!-- Create Client Modal -->
+<div id="createModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCreateModal()">&times;</span>
+        <h2 class="mb-4">Create New Client</h2>
+        <form asp-action="CreateClient" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label class="form-label">User Code *</label>
+                <input type="text" name="UserCode" class="form-control" required />
+                <div class="help-text">Unique identifier for the client</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Username *</label>
+                <input type="text" name="Username" class="form-control" required />
+                <div class="help-text">Display name for the client</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password (Optional)</label>
+                <input type="password" name="Password" class="form-control" />
+                <div class="help-text">Only provide if client needs login access</div>
+            </div>
+            <button type="submit" class="btn-glass btn-primary w-100">Create Client</button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Form (Hidden) -->
+<form id="deleteForm" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function openCreateModal() {
+            document.getElementById('createModal').style.display = 'block';
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').style.display = 'none';
+        }
+
+        function confirmDelete(userId, userName) {
+            if (confirm(`Are you sure you want to delete client "${userName}"? This action cannot be undone.`)) {
+                const form = document.getElementById('deleteForm');
+                form.action = '@Url.Action("DeleteClient", "UnifiedUserManagement")/' + userId;
+                form.submit();
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('createModal');
+            if (event.target == modal) {
+                closeCreateModal();
+            }
+        }
+    </script>
 }

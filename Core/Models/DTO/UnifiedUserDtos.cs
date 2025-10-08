@@ -24,6 +24,5 @@
         public string? UserType { get; set; } // "Staff" or "Client"
         public string? RoleId { get; set; }
         public string? SearchTerm { get; set; }
-        public bool? IsActive { get; set; }
     }
 }

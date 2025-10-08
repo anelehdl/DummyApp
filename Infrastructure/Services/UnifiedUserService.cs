@@ -79,7 +79,7 @@ namespace Infrastructure.Services
                     {
                         var searchLower = filter.SearchTerm.ToLower();
                         if (!client.UserCode.ToLower().Contains(searchLower) &&
-                            !client.Username.ToLower().Contains(searchLower)) ;
+                            !client.Username.ToLower().Contains(searchLower))
                             continue;
                     }
 

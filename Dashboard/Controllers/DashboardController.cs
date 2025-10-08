@@ -51,7 +51,8 @@ namespace Dashboard.Controllers
                 new Claim(ClaimTypes.NameIdentifier, result.UserId),
                 new Claim(ClaimTypes.Email, result.Email),
                 new Claim(ClaimTypes.GivenName, result.FirstName),
-                new Claim(ClaimTypes.Name, result.FirstName)
+                new Claim(ClaimTypes.Name, result.FirstName),
+                new Claim("Token", result.Token)
             };
 
             // Add role claim if available
