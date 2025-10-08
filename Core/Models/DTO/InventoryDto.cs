@@ -3,7 +3,7 @@
     public class InventoryDto
     {
         public string Id { get; set; }
-        public string Sku { get; set; }
+        public int Sku { get; set; }  // Changed from string to int
         public string SkuDescription { get; set; }
         public string UserCode { get; set; }
         public DateTime OrderDate { get; set; }
@@ -34,7 +34,7 @@
         public string? UserCode { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string? Sku { get; set; }
+        public int? Sku { get; set; }  // Changed from string to int
     }
 
     public class StockMetricsOverviewDto

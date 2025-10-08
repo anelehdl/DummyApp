@@ -180,9 +180,9 @@ namespace Infrastructure.Services
                 filters.Add(filterBuilder.Lte(i => i.OrderDate, filter.EndDate.Value));
             }
 
-            if (!string.IsNullOrEmpty(filter.Sku))
+            if (filter.Sku.HasValue)
             {
-                filters.Add(filterBuilder.Eq(i => i.Sku, filter.Sku));
+                filters.Add(filterBuilder.Eq(i => i.Sku, filter.Sku.Value));
             }
 
             var combinedFilter = filters.Any()

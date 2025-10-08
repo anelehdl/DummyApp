@@ -10,7 +10,8 @@ namespace Core.Models
         public ObjectId Id { get; set; }
 
         [BsonElement("sku")]
-        public string Sku { get; set; }
+        [BsonRepresentation(BsonType.Int32)]
+        public int Sku { get; set; }
 
         [BsonElement("sku_description")]
         public string SkuDescription { get; set; }

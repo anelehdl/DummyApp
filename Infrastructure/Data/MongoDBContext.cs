@@ -11,10 +11,33 @@ namespace Infrastructure.Data
 
         public MongoDBContext(MongoDBSettings settings)
         {
-            _settings = settings;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+
+            if (string.IsNullOrEmpty(_settings.ConnectionString))
+                throw new ArgumentException("MongoDB ConnectionString cannot be null or empty");
+
+            if (string.IsNullOrEmpty(_settings.DatabaseName))
+                throw new ArgumentException("MongoDB DatabaseName cannot be null or empty");
+
+            if (string.IsNullOrEmpty(_settings.ForecastDatabaseName))
+                throw new ArgumentException("MongoDB ForecastDatabaseName cannot be null or empty. Check appsettings.json");
+
+            if (_settings.ForecastCollectionNames == null)
+                throw new ArgumentException("ForecastCollectionNames configuration is missing. Check appsettings.json");
+
+            if (string.IsNullOrEmpty(_settings.ForecastCollectionNames.Inventory))
+                throw new ArgumentException("ForecastCollectionNames.Inventory is not configured. Check appsettings.json");
+
             var client = new MongoClient(_settings.ConnectionString);
             _database = client.GetDatabase(_settings.DatabaseName);
+
+            // Connect to ForecastDB for inventory data
             _forecastDatabase = client.GetDatabase(_settings.ForecastDatabaseName);
+
+            Console.WriteLine($"MongoDBContext initialized:");
+            Console.WriteLine($"  - UserDB: {_settings.DatabaseName}");
+            Console.WriteLine($"  - ForecastDB: {_settings.ForecastDatabaseName}");
+            Console.WriteLine($"  - Inventory Collection: {_settings.ForecastCollectionNames.Inventory}");
         }
 
         // UserDB Collections
@@ -37,7 +60,7 @@ namespace Infrastructure.Data
             _forecastDatabase.GetCollection<Inventory>(_settings.ForecastCollectionNames.Inventory);
 
 
-        //FOR LATER COLLECTION ADDITIONS (Need to add to models in core)
+
         //public IMongoCollection<Core.Models.BatchScan> BatchScansCollection =>
         //    _forecastDatabase.GetCollection<Core.Models.BatchScan>(_settings.ForecastCollectionNames.BatchScans);
 
