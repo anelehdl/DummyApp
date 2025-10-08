@@ -8,6 +8,7 @@
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
+        padding-top: 30rem;
     }
 
     .panel {
@@ -149,7 +150,7 @@
 </style>
 
 <div class="details-container">
-    <a asp-action="Index" class="back-link">← Back to Stock Metrics</a>
+    <a asp-action="Index" class="back-link">←  Back to Stock Metrics</a>
 
     @if (ViewBag.Error != null)
     {
@@ -166,16 +167,6 @@
                     <h1>@Model.Username</h1>
                     <div class="client-code">User Code: @Model.UserCode</div>
                 </div>
-                <div>
-                    @if (Model.DaysSinceLastOrder > 30)
-                    {
-                        <span class="warning-badge">⚠️ Inactive (30+ days)</span>
-                    }
-                    else
-                    {
-                        <span class="success-badge">✓ Active</span>
-                    }
-                </div>
             </div>
 
             <div class="stats-grid">
@@ -190,10 +181,6 @@
                 <div class="stat-card">
                     <div class="stat-number">@Model.AverageDailyUsage.ToString("F2")</div>
                     <div class="stat-label">Avg Daily Usage (L)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">@Model.DaysSinceLastOrder</div>
-                    <div class="stat-label">Days Since Last Order</div>
                 </div>
             </div>
 

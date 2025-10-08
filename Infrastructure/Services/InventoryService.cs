@@ -40,6 +40,10 @@ namespace Infrastructure.Services
                 var orders = group.OrderByDescending(i => i.OrderDate).ToList();
                 var lastOrder = orders.FirstOrDefault();
 
+                // Filter out null values before averaging
+                var validDailyUsages = orders.Where(o => o.AverageDailyUse.HasValue)
+                                            .Select(o => o.AverageDailyUse.Value);
+
                 var stats = new ClientInventoryStatsDto
                 {
                     ClientId = clientId,
@@ -47,11 +51,8 @@ namespace Infrastructure.Services
                     Username = client.Username,
                     TotalOrders = orders.Count,
                     TotalLitres = orders.Sum(o => o.Litres),
-                    AverageDailyUsage = orders.Average(o => o.AverageDailyUse),
+                    AverageDailyUsage = validDailyUsages.Any() ? validDailyUsages.Average() : 0,
                     LastOrderDate = lastOrder?.OrderDate,
-                    DaysSinceLastOrder = lastOrder != null
-                        ? (DateTime.UtcNow - lastOrder.OrderDate).Days
-                        : 0,
                     RecentOrders = orders.Take(5).Select(o => new InventoryDto
                     {
                         Id = o.Id.ToString(),
@@ -62,7 +63,7 @@ namespace Infrastructure.Services
                         PreviousOrderDate = o.PreviousOrderDate,
                         Litres = o.Litres,
                         DaysBetweenOrders = o.DaysBetweenOrders,
-                        AverageDailyUse = o.AverageDailyUse,
+                        AverageDailyUse = o.AverageDailyUse ?? 0, // Handle null
                         UserId = o.UserId.ToString()
                     }).ToList(),
                     SkuBreakdown = orders.GroupBy(o => o.SkuDescription)
@@ -72,14 +73,16 @@ namespace Infrastructure.Services
                 clientStats[clientId] = stats;
             }
 
+            // Filter out null values for the overall average
+            var validOverallUsages = allInventory.Where(i => i.AverageDailyUse.HasValue)
+                                                 .Select(i => i.AverageDailyUse.Value);
+
             var overview = new StockMetricsOverviewDto
             {
                 TotalClients = clientStats.Count,
                 TotalOrders = allInventory.Count,
                 TotalLitres = allInventory.Sum(i => i.Litres),
-                AverageDailyUsageAllClients = allInventory.Any()
-                    ? allInventory.Average(i => i.AverageDailyUse)
-                    : 0,
+                AverageDailyUsageAllClients = validOverallUsages.Any() ? validOverallUsages.Average() : 0,
                 TopClients = clientStats.Values
                     .OrderByDescending(c => c.TotalLitres)
                     .Take(10)
@@ -119,12 +122,14 @@ namespace Infrastructure.Services
                     TotalOrders = 0,
                     TotalLitres = 0,
                     AverageDailyUsage = 0,
-                    LastOrderDate = null,
-                    DaysSinceLastOrder = 0
+                    LastOrderDate = null
                 };
             }
 
             var lastOrder = inventory.First();
+
+            var validDailyUsages = inventory.Where(i => i.AverageDailyUse.HasValue)
+                                           .Select(i => i.AverageDailyUse.Value);
 
             return new ClientInventoryStatsDto
             {
@@ -133,9 +138,8 @@ namespace Infrastructure.Services
                 Username = client.Username,
                 TotalOrders = inventory.Count,
                 TotalLitres = inventory.Sum(i => i.Litres),
-                AverageDailyUsage = inventory.Average(i => i.AverageDailyUse),
+                AverageDailyUsage = validDailyUsages.Any() ? validDailyUsages.Average() : 0,
                 LastOrderDate = lastOrder.OrderDate,
-                DaysSinceLastOrder = (DateTime.UtcNow - lastOrder.OrderDate).Days,
                 RecentOrders = inventory.Take(10).Select(i => new InventoryDto
                 {
                     Id = i.Id.ToString(),
@@ -146,7 +150,7 @@ namespace Infrastructure.Services
                     PreviousOrderDate = i.PreviousOrderDate,
                     Litres = i.Litres,
                     DaysBetweenOrders = i.DaysBetweenOrders,
-                    AverageDailyUse = i.AverageDailyUse,
+                    AverageDailyUse = i.AverageDailyUse ?? 0,
                     UserId = i.UserId.ToString()
                 }).ToList(),
                 SkuBreakdown = inventory
@@ -204,7 +208,7 @@ namespace Infrastructure.Services
                 PreviousOrderDate = i.PreviousOrderDate,
                 Litres = i.Litres,
                 DaysBetweenOrders = i.DaysBetweenOrders,
-                AverageDailyUse = i.AverageDailyUse,
+                AverageDailyUse = i.AverageDailyUse ?? 0,
                 UserId = i.UserId.ToString()
             }).ToList();
         }

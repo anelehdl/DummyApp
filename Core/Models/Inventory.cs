@@ -32,7 +32,7 @@ namespace Core.Models
         public int DaysBetweenOrders { get; set; }
 
         [BsonElement("average_daily_use")]
-        public double AverageDailyUse { get; set; }
+        public double? AverageDailyUse { get; set; }
 
         [BsonElement("user_id")]
         [BsonRepresentation(BsonType.ObjectId)]

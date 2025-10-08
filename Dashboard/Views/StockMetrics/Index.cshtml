@@ -8,6 +8,7 @@
         padding: 2rem;
         max-width: 1600px;
         margin: 0 auto;
+        padding-top: 30rem;
     }
 
     .panel {
@@ -18,6 +19,17 @@
         padding: 2rem;
         margin-bottom: 2rem;
     }
+
+    .back-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: white;
+        }
 
     .stats-grid {
         display: grid;
@@ -164,6 +176,7 @@
 
 <div class="metrics-container">
     <h1 class="mb-4">Stock Metrics Dashboard</h1>
+    <a asp-controller="Home" asp-action="Index" class="back-link">←  Back to Dashboard</a>
 
     @if (ViewBag.Error != null)
     {
@@ -224,7 +237,6 @@
                             <th>Total Litres</th>
                             <th>Avg Daily Use</th>
                             <th>Last Order</th>
-                            <th>Days Since</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -247,7 +259,6 @@
                                         <span style="opacity: 0.6;">N/A</span>
                                     }
                                 </td>
-                                <td>@client.DaysSinceLastOrder days</td>
                                 <td>
                                     <a asp-action="ClientDetails" asp-route-clientId="@client.ClientId" class="btn-glass">
                                         View Details

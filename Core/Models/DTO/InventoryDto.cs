@@ -23,7 +23,6 @@
         public int TotalLitres { get; set; }
         public double AverageDailyUsage { get; set; }
         public DateTime? LastOrderDate { get; set; }
-        public int DaysSinceLastOrder { get; set; }
         public List<InventoryDto> RecentOrders { get; set; } = new();
         public Dictionary<string, int> SkuBreakdown { get; set; } = new();
     }
@@ -34,7 +33,7 @@
         public string? UserCode { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int? Sku { get; set; }  // Changed from string to int
+        public int? Sku { get; set; }
     }
 
     public class StockMetricsOverviewDto
